@@ -27,14 +27,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
-    // Paths
-    "paths": {
-      "@homy/api": [
-        "./apps/api/src/index.ts"
-      ],
-      "@homy/api/client": [
-        "./apps/api/src/client.ts"
-      ]
-    }
   }
 }

@@ -25,7 +25,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@homy/api": [
+        "../api/src/index.ts"
+      ],
+      "@homy/api/client": [
+        "../api/src/client.ts"
+      ]
+    }
   },
   "include": [
     "src"

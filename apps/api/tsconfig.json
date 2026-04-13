@@ -3,7 +3,10 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*"

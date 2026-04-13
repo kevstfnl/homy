@@ -1,4 +1,13 @@
 {
   "extends": "../../tsconfig.json",
-  
+  "compilerOptions": {
+    "paths": {
+      "@homy/api": [
+        "../api/src/index.ts"
+      ],
+      "@homy/api/client": [
+        "../api/src/client.ts"
+      ]
+    }
+  }
 }

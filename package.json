@@ -1,6 +1,9 @@
 {
 	"name": "homy",
-	"module": "index.ts",
+	"author": "Kevin Stefanelli",
+	"description": "Create specialized agents, assign them capabilities and tools, and define how they interact with one another.",
+	"keywords": ["AI", "Agent", "Workflow", "Automatisations", "Tools", "Memories", "A2A"],
+	"version": "0.0.1",
 	"type": "module",
 	"private": true,
 	"workspaces": [
