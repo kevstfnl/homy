@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  }
+}

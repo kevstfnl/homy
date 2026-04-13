@@ -1,0 +1,6 @@
+[install]
+linkWorkspaces = true
+cache = true
+
+[test]
+coverage = true

@@ -1,0 +1,19 @@
+{
+	"name": "@homy/discord",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"@homy/api": "workspace:*",
+		"discord.js": "^14.26.2"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}
