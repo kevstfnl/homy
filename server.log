@@ -1,0 +1,59 @@
+$ bun run --filter '*' dev
+@homy/api dev: Started development server: http://localhost:3000
+@homy/api dev: [prompt] Starting for agent a90bbb18-2023-422e-94b6-bf4273684d39 with message: What is 2+2?
+@homy/api dev: [prompt] DB agent loaded: {
+@homy/api dev:   id: "a90bbb18-2023-422e-94b6-bf4273684d39",
+@homy/api dev:   name: "QwenLocal",
+@homy/api dev:   description: "Local test with Qwen3.5",
+@homy/api dev:   role: "assistant",
+@homy/api dev:   personality: "helpful and concise",
+@homy/api dev:   model: "lemonade:Qwen3.5-0.8B-GGUF",
+@homy/api dev:   useMemory: false,
+@homy/api dev:   useProfile: true,
+@homy/api dev:   createdAt: 2026-04-14T18:36:55.000Z,
+@homy/api dev:   tools: [],
+@homy/api dev:   learnings: [],
+@homy/api dev: }
+@homy/api dev: [prompt] piAgent created, model: {
+@homy/api dev:   id: "Qwen3.5-0.8B-GGUF",
+@homy/api dev:   name: "Qwen3.5-0.8B-GGUF",
+@homy/api dev:   provider: "lemonade",
+@homy/api dev:   api: "openai-completions",
+@homy/api dev:   baseURL: "http://localhost:13305/api",
+@homy/api dev:   reasoning: false,
+@homy/api dev:   input: [ "text" ],
+@homy/api dev:   cost: {
+@homy/api dev:     input: 0,
+@homy/api dev:     output: 0,
+@homy/api dev:   },
+@homy/api dev:   contextWindow: 4096,
+@homy/api dev:   maxTokens: 2048,
+@homy/api dev: }
+@homy/api dev: [prompt] Prompt executed, messages: [
+@homy/api dev:   {
+@homy/api dev:     role: "user",
+@homy/api dev:     content: [
+@homy/api dev:       [Object ...]
+@homy/api dev:     ],
+@homy/api dev:     timestamp: 1776192858287,
+@homy/api dev:   }, {
+@homy/api dev:     role: "assistant",
+@homy/api dev:     content: [],
+@homy/api dev:     api: "openai-completions",
+@homy/api dev:     provider: "lemonade",
+@homy/api dev:     model: "Qwen3.5-0.8B-GGUF",
+@homy/api dev:     usage: {
+@homy/api dev:       input: 0,
+@homy/api dev:       output: 0,
+@homy/api dev:       cacheRead: 0,
+@homy/api dev:       cacheWrite: 0,
+@homy/api dev:       totalTokens: 0,
+@homy/api dev:       cost: [Object ...],
+@homy/api dev:     },
+@homy/api dev:     stopReason: "error",
+@homy/api dev:     errorMessage: "No API key for provider: lemonade",
+@homy/api dev:     timestamp: 1776192858353,
+@homy/api dev:   }
+@homy/api dev: ]
+@homy/api dev: [prompt] Prompt executed, extracting response
+@homy/api dev: Started development server: http://localhost:3000

@@ -10,36 +10,42 @@
 		"apps/*"
 	],
 	"scripts": {
-		"dev:api": "bun run --filter api dev",
-		"dev:web": "bun run --filter web dev",
-		"dev:discord": "bun run --filter discord dev",
+		"dev:api": "bun run --filter '@homy/api' dev",
+		"dev:web": "bun run --filter '@homy/web' dev",
+		"dev:discord": "bun run --filter '@homy/discord' dev",
 		"dev": "bun run --filter '*' dev",
-		"start:api": "bun run --filter api start",
-		"start:discord": "bun run --filter discord start",
+		"start:api": "bun run --filter '@homy/api' start",
+		"start:discord": "bun run --filter '@homy/discord' start",
 		"build": "bun run --workspaces --if-present build",
-		"build:api": "bun run --filter api build",
-		"build:web": "bun run --filter web build",
-		"build:discord": "bun run --filter discord build",
+		"build:api": "bun run --filter '@homy/api' build",
+		"build:web": "bun run --filter '@homy/web' build",
+		"build:discord": "bun run --filter '@homy/discord' build",
 		"typecheck": "bun run --workspaces --if-present typecheck",
-		"typecheck:api": "bun run --filter api typecheck",
-		"typecheck:web": "bun run --filter web typecheck",
-		"typecheck:discord": "bun run --filter discord typecheck",
+		"typecheck:api": "bun run --filter '@homy/api' typecheck",
+		"typecheck:web": "bun run --filter '@homy/web' typecheck",
+		"typecheck:discord": "bun run --filter '@homy/discord' typecheck",
+		"test": "bun run --workspaces --if-present test",
+		"test:api": "bun run --filter '@homy/api' test",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"check": "biome check .",
 		"check:fix": "biome check --write .",
-		"db:generate": "bun run --filter api db:generate",
-		"db:migrate": "bun run --filter api db:migrate",
-		"db:studio": "bun run --filter api db:studio",
+		"db:generate": "bun run --filter '@homy/api' db:generate",
+		"db:migrate": "bun run --filter '@homy/api' db:migrate",
+		"db:studio": "bun run --filter '@homy/api' db:studio",
 		"clean": "bun run --workspaces --if-present clean"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.11",
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"drizzle-kit": "1.0.0-beta.21"
 	},
 	"peerDependencies": {
 		"typescript": "^6.0.2"
+	},
+	"dependencies": {
+		"drizzle-orm": "1.0.0-beta.21"
 	}
 }
