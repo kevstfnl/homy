@@ -1,6 +1,5 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import "./index.css";
-import App from "./App.tsx";
+import Dashboard from "./pages/Dashboard";
 
-render(() => <App />, document.querySelector("body") as HTMLBodyElement);
+render(() => <Dashboard />, document.querySelector("body") as HTMLBodyElement);

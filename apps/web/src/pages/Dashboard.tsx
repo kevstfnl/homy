@@ -1,6 +1,4 @@
-import "./App.css";
-
-function App() {
+export default function Dashboard() {
 	return (
 		<>
 			<h1>Test</h1>
@@ -10,5 +8,3 @@ function App() {
 		</>
 	);
 }
-
-export default App;
