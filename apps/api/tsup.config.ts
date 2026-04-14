@@ -7,7 +7,7 @@ export default defineConfig({
     sourcemap: true,
     clean: true,
     minify: true,
-    
+
     tsconfig: "tsconfig.json",
     entry: {
         index: "./src/index.ts",
