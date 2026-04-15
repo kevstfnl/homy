@@ -2,7 +2,7 @@ import { Agent, type AgentTool } from "@mariozechner/pi-agent-core";
 import { type Api, getModel, type KnownProvider, type Model } from "@mariozechner/pi-ai";
 import { getLemonadeModel } from "./customProvider";
 
-interface DBAgent {
+export interface DBAgent {
 	id: string;
 	name: string;
 	description: string | null;

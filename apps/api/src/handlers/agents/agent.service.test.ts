@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it } from "bun:test";
+import type { DBAgent } from "../../libs/agents/agentCreator";
 import { AgentService } from "./agent.service";
 
-let mockAgents: Record<string, any> = {};
+let _mockAgents: Record<string, DBAgent> = {};
 
 describe("AgentService CRUD", () => {
 	beforeEach(() => {
-		mockAgents = {
+		_mockAgents = {
 			"agent-1": {
 				id: "agent-1",
 				name: "Test Agent",
