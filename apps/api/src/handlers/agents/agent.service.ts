@@ -25,115 +25,108 @@ export namespace AgentService {
 
 	// Prompt the agent and get complete response
 	export const prompt = async (id: string, message: string): Promise<AgentTypes.PromptResponse> => {
-		const dbAgent = await getById(id);
-		const piAgent = createAgent(dbAgent);
+		try {
+			const dbAgent = await getById(id);
+			const piAgent = createAgent(dbAgent);
 
-		// Send the prompt and wait for completion
-		await piAgent.prompt(message);
+			await piAgent.prompt(message);
 
-		// Extract the last assistant message
-		const lastMessage = piAgent.state.messages.at(-1);
-		if (!lastMessage || lastMessage.role !== "assistant") {
-			throw new Error("No response received from agent");
+			const lastMessage = piAgent.state.messages.at(-1);
+			if (!lastMessage || lastMessage.role !== "assistant") throw new Error("No response received from agent");
+
+			const textContent = lastMessage.content.find((c) => "text" in c && c.type === "text");
+			const responseText = textContent && "text" in textContent ? textContent.text : "";
+
+			const usage = lastMessage.usage;
+			const totalTokens = usage.totalTokens ?? (usage.input ?? 0) + (usage.output ?? 0);
+
+			return {
+				response: responseText,
+				usage: {
+					input: "input" in usage ? Number(usage.input) : 0,
+					output: "output" in usage ? Number(usage.output) : 0,
+					totalTokens: Number(totalTokens),
+					cost: "cost" in usage ? Number((usage).cost) : undefined,
+				},
+				stopReason: lastMessage.stopReason ?? "unknown",
+			};
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : String(error);
+			console.error(`[Agent Prompt Error] ID: ${id}`, errorMsg);
+			throw error;
 		}
-
-		// Extract text content and usage
-		const textContent = lastMessage.content.find((c) => "text" in c && c.type === "text");
-		const responseText = textContent && "text" in textContent ? textContent.text : "";
-
-		// Extract usage from the message
-		const usage = (lastMessage.usage ?? {}) as any;
-		const totalTokens = usage.totalTokens ?? (usage.input ?? 0) + (usage.output ?? 0);
-
-		return {
-			response: responseText,
-			usage: {
-				input: "input" in usage ? Number(usage.input) : 0,
-				output: "output" in usage ? Number(usage.output) : 0,
-				totalTokens: Number(totalTokens),
-				cost: "cost" in usage ? Number((usage as any).cost) : undefined,
-			},
-			stopReason: lastMessage.stopReason ?? "unknown",
-		};
 	};
 
 	// Stream prompts to the agent (yields events)
 	export async function* promptStream(id: string, message: string) {
-		const dbAgent = await getById(id);
-		const piAgent = createAgent(dbAgent);
+		try {
+			const dbAgent = await getById(id);
+			const piAgent = createAgent(dbAgent);
 
-		// Subscribe to agent events for streaming
-		let unsubscribe: (() => void) | null = null;
-		const eventsQueue: AgentTypes.PromptStreamEvent[] = [];
-		let done = false;
-		let error: Error | null = null;
+			let unsubscribe: (() => void) | null = null;
+			const eventsQueue: AgentTypes.PromptStreamEvent[] = [];
+			let done = false;
+			let error: Error | null = null;
 
-		const subscription = piAgent.subscribe((event: any) => {
-			// Yield text deltas
-			if (event.type === "message_update" && event.assistantMessageEvent?.type === "text_delta") {
-				eventsQueue.push({
-					type: "delta",
-					text: event.assistantMessageEvent.delta,
-				});
-			}
-
-			// Yield final message with usage
-			if (event.type === "agent_end") {
-				const lastMessage = piAgent.state.messages.at(-1);
-				if (lastMessage && lastMessage.role === "assistant") {
-					const usage = (lastMessage.usage ?? {}) as any;
+			const subscription = piAgent.subscribe((event) => {
+				if (event.type === "message_update" && event.assistantMessageEvent?.type === "text_delta") {
 					eventsQueue.push({
-						type: "done",
-						usage: {
-							input: usage.input ?? 0,
-							output: usage.output ?? 0,
-							totalTokens: usage.totalTokens ?? (usage.input ?? 0) + (usage.output ?? 0),
-						},
-						stopReason: lastMessage.stopReason ?? "unknown",
+						type: "delta",
+						text: event.assistantMessageEvent.delta,
 					});
 				}
-				done = true;
-			}
 
-			// Handle errors
-			if (event.type === "message_update" && event.assistantMessageEvent?.type === "error") {
-				const errMsg = event.assistantMessageEvent.error?.message || "Unknown error";
-				error = new Error(errMsg);
-				done = true;
-			}
-		});
-
-		unsubscribe = subscription;
-
-		// Send the prompt (non-awaiting to allow streaming)
-		const promptPromise = piAgent.prompt(message);
-
-		try {
-			// Yield events as they arrive
-			while (!done || eventsQueue.length > 0) {
-				if (eventsQueue.length > 0) {
-					yield eventsQueue.shift()!;
-				} else if (!done) {
-					// Small delay to avoid busy waiting
-					await new Promise((resolve) => setTimeout(resolve, 10));
+				if (event.type === "agent_end") {
+					const lastMessage = piAgent.state.messages.at(-1);
+					if (lastMessage && lastMessage.role === "assistant") {
+						const usage = (lastMessage.usage ?? {});
+						eventsQueue.push({
+							type: "done",
+							usage: {
+								input: usage.input ?? 0,
+								output: usage.output ?? 0,
+								totalTokens: usage.totalTokens ?? (usage.input ?? 0) + (usage.output ?? 0),
+							},
+							stopReason: lastMessage.stopReason ?? "unknown",
+						});
+					}
+					done = true;
 				}
-			}
 
-			// Wait for prompt to finish
-			await promptPromise;
+				if (event.type === "message_update" && event.assistantMessageEvent?.type === "error") {
+					const errMsg = event.assistantMessageEvent.error?.stopReason || "Unknown error";
+					error = new Error(errMsg);
+					done = true;
+				}
+			});
 
-			// Yield any remaining events
-			while (eventsQueue.length > 0) {
-				yield eventsQueue.shift()!;
-			}
+			unsubscribe = subscription;
 
-			if (error) {
-				throw error;
+			const promptPromise = piAgent.prompt(message);
+
+			try {
+				while (!done || eventsQueue.length > 0) {
+					if (eventsQueue.length > 0) {
+						yield eventsQueue.shift();
+					} else if (!done) {
+						await new Promise((resolve) => setTimeout(resolve, 10));
+					}
+				}
+
+				await promptPromise;
+				while (eventsQueue.length > 0) yield eventsQueue.shift();
+				if (error) throw error;
+
+			} finally {
+				if (unsubscribe) unsubscribe();
 			}
-		} finally {
-			if (unsubscribe) {
-				unsubscribe();
-			}
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : String(error);
+			console.error(`[Agent Stream Prompt Error] ID: ${id}`, errorMsg);
+			yield {
+				type: "error",
+				error: errorMsg,
+			};
 		}
 	}
 }

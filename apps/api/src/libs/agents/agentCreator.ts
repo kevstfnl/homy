@@ -1,5 +1,6 @@
 import { Agent, type AgentTool } from "@mariozechner/pi-agent-core";
-import { getModel } from "@mariozechner/pi-ai";
+import { getModel, type Api, type KnownApi, type KnownProvider, type Model } from "@mariozechner/pi-ai";
+import { getLemonadeModel } from "./customProvider";
 
 interface DBAgent {
 	id: string;
@@ -15,34 +16,27 @@ interface DBAgent {
 	learnings?: unknown[];
 }
 
-/**
- * Factory function that creates a pi-agent-core Agent from database agent data
- * Parses model string format: "provider:modelId" (e.g., "anthropic:claude-sonnet-4-20250514")
- */
 export function createAgent(dbAgent: DBAgent | null | undefined, tools: AgentTool[] = []): Agent {
-	if (!dbAgent) {
-		throw new Error("Agent not found");
-	}
+	if (!dbAgent) throw new Error("Agent not found");
 
-	// Parse model string format: "provider:modelId"
 	const [provider, modelId] = dbAgent.model.split(":");
-	if (!provider || !modelId) {
-		throw new Error(`Invalid model format for agent ${dbAgent.id}. Expected "provider:modelId", got "${dbAgent.model}"`);
+	if (!provider || !modelId) throw new Error(`Invalid model format ${dbAgent.id}. Expected "provider:modelId", got "${dbAgent.model}"`);
+
+	let model: Model<Api> | undefined;
+	if (provider === "lemonade") {
+		model = getLemonadeModel(modelId);
+	} else {
+		model = getModel(provider as KnownProvider, modelId as never);
 	}
 
-	// Get the model from pi-ai
-	const model = getModel(provider as any, modelId);
-
-	// Compose system prompt from agent attributes
 	const systemPromptParts = [
-		dbAgent.description || `I am ${dbAgent.name}.`,
+		dbAgent.description || `You are ${dbAgent.name}.`,
 		`Role: ${dbAgent.role}`,
 		`Personality: ${dbAgent.personality}`,
 	];
 
 	const systemPrompt = systemPromptParts.filter(Boolean).join("\n\n");
 
-	// Create and return the Agent instance
 	return new Agent({
 		initialState: {
 			systemPrompt,

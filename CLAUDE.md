@@ -216,7 +216,17 @@ curl -X POST "http://localhost:3000/agents/$AGENT_ID/prompt/stream" \
 
 ## Environment Setup
 
-Set LLM provider API keys in `.env` (or pass at startup):
+### Option 1: CLI (Recommended for Development)
+
+Pass API keys directly when running the API:
+
+```bash
+OPENAI_API_KEY=sk-your-key ANTHROPIC_API_KEY=sk-ant-your-key bun run --filter @homy/api dev
+```
+
+### Option 2: .env File
+
+Create `.env` file at project root:
 
 ```bash
 # Anthropic
@@ -230,7 +240,18 @@ GEMINI_API_KEY=...
 
 # Groq
 GROQ_API_KEY=...
+
+# Local Lemonade Server (use any dummy value)
+# Lemonade runs on http://localhost:13305 and doesn't need real API keys
+# Just define OPENAI_API_KEY with a dummy value
 ```
+
+### Special Case: Lemonade (Local LLM Server)
+
+If using models with `lemonade:` prefix (e.g., `lemonade:Qwen3.5-0.8B-GGUF`):
+- Lemonade server must be running on `http://localhost:13305`
+- Set `OPENAI_API_KEY=sk-local` or any value (not validated since it's local)
+- The model will use Lemonade's local inference instead of remote APIs
 
 Then start the API:
 ```bash
