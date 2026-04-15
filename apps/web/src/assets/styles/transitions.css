@@ -1,0 +1,20 @@
+/* View Transition API styles */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+	z-index: 0;
+}
+
+::view-transition-new(root) {
+	z-index: 5;
+}
+
+/* Theme transition - smooth color changes */
+html.theme-transition,
+html.theme-transition * {
+	transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
