@@ -46,7 +46,7 @@ export namespace AgentService {
 					input: "input" in usage ? Number(usage.input) : 0,
 					output: "output" in usage ? Number(usage.output) : 0,
 					totalTokens: Number(totalTokens),
-					cost: "cost" in usage ? Number((usage).cost) : undefined,
+					cost: "cost" in usage ? Number(usage.cost) : undefined,
 				},
 				stopReason: lastMessage.stopReason ?? "unknown",
 			};
@@ -79,7 +79,7 @@ export namespace AgentService {
 				if (event.type === "agent_end") {
 					const lastMessage = piAgent.state.messages.at(-1);
 					if (lastMessage && lastMessage.role === "assistant") {
-						const usage = (lastMessage.usage ?? {});
+						const usage = lastMessage.usage ?? {};
 						eventsQueue.push({
 							type: "done",
 							usage: {
@@ -116,7 +116,6 @@ export namespace AgentService {
 				await promptPromise;
 				while (eventsQueue.length > 0) yield eventsQueue.shift();
 				if (error) throw error;
-
 			} finally {
 				if (unsubscribe) unsubscribe();
 			}

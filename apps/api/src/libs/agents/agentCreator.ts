@@ -1,5 +1,5 @@
 import { Agent, type AgentTool } from "@mariozechner/pi-agent-core";
-import { getModel, type Api, type KnownApi, type KnownProvider, type Model } from "@mariozechner/pi-ai";
+import { type Api, getModel, type KnownProvider, type Model } from "@mariozechner/pi-ai";
 import { getLemonadeModel } from "./customProvider";
 
 interface DBAgent {
@@ -20,7 +20,8 @@ export function createAgent(dbAgent: DBAgent | null | undefined, tools: AgentToo
 	if (!dbAgent) throw new Error("Agent not found");
 
 	const [provider, modelId] = dbAgent.model.split(":");
-	if (!provider || !modelId) throw new Error(`Invalid model format ${dbAgent.id}. Expected "provider:modelId", got "${dbAgent.model}"`);
+	if (!provider || !modelId)
+		throw new Error(`Invalid model format ${dbAgent.id}. Expected "provider:modelId", got "${dbAgent.model}"`);
 
 	let model: Model<Api> | undefined;
 	if (provider === "lemonade") {
