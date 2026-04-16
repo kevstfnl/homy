@@ -12,7 +12,20 @@ export interface DBAgent {
 	useMemory?: boolean | null;
 	useProfile?: boolean | null;
 	createdAt?: Date | null;
-	tools?: unknown[];
+	tools?: Array<{
+		agentId: string;
+		toolId: string;
+		tool: {
+			id: string;
+			name: string;
+			description: string | null;
+			enabled: boolean | null;
+			type: "builtin" | "npm" | "custom";
+			source: string | null;
+			config: Record<string, unknown> | null;
+			createdAt: Date | null;
+		} | null;
+	}>;
 	learnings?: unknown[];
 }
 

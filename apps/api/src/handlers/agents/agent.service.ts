@@ -1,4 +1,5 @@
 import { createAgent } from "../../libs/agents/agentCreator";
+import { createAgentToolsFromDB } from "../../libs/tools/toolCreator";
 import { AgentRepository } from "./agent.repository";
 import type { AgentTypes } from "./agent.types";
 
@@ -27,7 +28,11 @@ export namespace AgentService {
 	export const prompt = async (id: string, message: string): Promise<AgentTypes.PromptResponse> => {
 		try {
 			const dbAgent = await getById(id);
-			const piAgent = createAgent(dbAgent);
+			const tools = dbAgent.tools
+				?.map((at) => at.tool)
+				.filter((tool): tool is NonNullable<typeof tool> => tool !== null) || [];
+			const agentTools = createAgentToolsFromDB(tools);
+			const piAgent = createAgent(dbAgent, agentTools);
 
 			await piAgent.prompt(message);
 
@@ -61,7 +66,11 @@ export namespace AgentService {
 	export async function* promptStream(id: string, message: string) {
 		try {
 			const dbAgent = await getById(id);
-			const piAgent = createAgent(dbAgent);
+			const tools = dbAgent.tools
+				?.map((at) => at.tool)
+				.filter((tool): tool is NonNullable<typeof tool> => tool !== null) || [];
+			const agentTools = createAgentToolsFromDB(tools);
+			const piAgent = createAgent(dbAgent, agentTools);
 
 			let unsubscribe: (() => void) | null = null;
 			const eventsQueue: AgentTypes.PromptStreamEvent[] = [];

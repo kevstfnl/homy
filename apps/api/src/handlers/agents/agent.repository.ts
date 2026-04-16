@@ -9,7 +9,7 @@ export namespace AgentRepository {
 	export const findById = (id: string) =>
 		database.query.agents.findFirst({
 			where: { id },
-			with: { tools: true, learnings: true },
+			with: { tools: { with: { tool: true } }, learnings: true },
 		});
 
 	export const create = (data: AgentTypes.Create) =>
